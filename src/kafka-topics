@@ -1,0 +1,148 @@
+# bash completion for kafka-topics                          -*- shell-script -*-
+
+_landoop-kafka-topics-configs()
+{
+    local cur prev configs topics
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    configs="cleanup.policy= \
+             compression.type= \
+             delete.retention.ms= \
+             file.delete.delay.ms= \
+             flush.messages= \
+             flush.ms= \
+             follower.replication.throttled= \
+             index.interval.bytes= \
+             leader.replication.throttled.replicas= \
+             max.message.bytes= \
+             message.format.version= \
+             message.timestamp.difference.max.ms= \
+             message.timestamp.type= \
+             min.cleanable.dirty.ratio= \
+             min.compaction.lag.ms= \
+             min.insync.replicas= \
+             preallocate= \
+             retention.bytes= \
+             retention.ms= \
+             segment.bytes= \
+             segment.index.bytes= \
+             segment.jitter.ms= \
+             segment.ms= \
+             unclean.leader.election.enable="
+
+    COMPREPLY=( $(compgen -W "${configs}" -- ${cur}) )
+    compopt -o nospace
+    return 0
+}
+
+_landoop-kafka-topics-delete-configs()
+{
+    local cur prev configs
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    configs="cleanup.policy \
+             compression.type \
+             delete.retention.ms \
+             file.delete.delay.ms \
+             flush.messages \
+             flush.ms \
+             follower.replication.throttled \
+             index.interval.bytes \
+             leader.replication.throttled.replicas \
+             max.message.bytes \
+             message.format.version \
+             message.timestamp.difference.max.ms \
+             message.timestamp.type \
+             min.cleanable.dirty.ratio \
+             min.compaction.lag.ms \
+             min.insync.replicas \
+             preallocate \
+             retention.bytes \
+             retention.ms \
+             segment.bytes \
+             segment.index.bytes \
+             segment.jitter.ms \
+             segment.ms \
+             unclean.leader.election.enable"
+
+    COMPREPLY=( $(compgen -W "${configs}" -- ${cur}) )
+    return 0
+}
+
+_landoop-list-topics ()
+{
+    local topics cur prev
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    topics="$(kafka-topics --zookeeper ${1} --list 2>/dev/null)"
+    COMPREPLY=( $(compgen -W "${topics}" -- ${cur}) )
+    return 0
+}
+
+_landoop-kafka-topics() {
+    local cur prev opts wotherarg allopts temp
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    wotherarg="--config \
+               --delete-config \
+               --partitions \
+               --replica-assignment \
+               --replication-factor \
+               --topic \
+               --zookeeper"
+    opts="--alter \
+          --create \
+          --delete \
+          --describe \
+          --disable-rack-aware \
+          --force \
+          --help \
+          --if-not-exits \
+          --list \
+          --topics-with-overrides \
+          --unavailable-partitions \
+          --under-replicated-partitions"
+
+    allopts="$wotherarg $opts"
+
+    case "$prev" in
+	--config)
+            _landoop-kafka-topics-configs
+            return 0
+            ;;
+	--delete-config)
+            _landoop-kafka-topics-delete-configs
+            return 0
+            ;;
+        --topic)
+            for i in "${!COMP_WORDS[@]}"; do
+                if [[ "${COMP_WORDS[$i]}" == "--zookeeper" ]]; then
+                    temp="${COMP_WORDS[$i+1]}"
+                    if [[ "${COMP_WORDS[$i+2]}" == : ]]; then
+                        temp="${temp}${COMP_WORDS[$i+2]}${COMP_WORDS[$i+3]}"
+                    fi
+                    _landoop-list-topics $temp
+                fi
+            done
+            return 0
+            ;;
+        --zookeeper)
+            _known_hosts
+            return 0
+            ;;
+        @(${wotherarg// /|}))
+            return 0
+            ;;
+    esac
+
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${allopts}" -- ${cur}) )
+        return 0
+    fi
+}
+
+complete -F _landoop-kafka-topics kafka-topics

@@ -1,0 +1,128 @@
+# bash completion for kafka-console-producer                -*- shell-script -*-
+
+_landoop-producer-configs()
+{
+    local cur prev configs
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    configs="bootstrap.servers= \
+             key.serializer= \
+             value.serializer= \
+             acks= \
+             buffer.memory= \
+             compression.type= \
+             retries= \
+             ssl.key.password= \
+             ssl.keystore.location= \
+             ssl.keystore.password= \
+             ssl.truststore.location= \
+             ssl.truststore.password= \
+             batch.size= \
+             client.id= \
+             connections.max.idle.ms= \
+             linger.ms= \
+             max.block.ms= \
+             max.request.size= \
+             partitioner.class= \
+             receive.buffer.bytes= \
+             request.timeout.ms= \
+             sasl.jaas.config= \
+             sasl.kerberos.service.name= \
+             sasl.mechanism= \
+             security.protocol= \
+             send.buffer.bytes= \
+             ssl.enabled.protocols= \
+             ssl.keystore.type= \
+             ssl.protocol= \
+             ssl.provider= \
+             ssl.truststore.type= \
+             timeout.ms= \
+             block.on.buffer.full= \
+             interceptor.classes= \
+             max.in.flight.requests.per.connection= \
+             metadata.fetch.timeout.ms= \
+             metadata.max.age.ms= \
+             metric.reporters= \
+             metrics.num.samples= \
+             metrics.sample.window.ms= \
+             reconnect.backoff.ms= \
+             retry.backoff.ms= \
+             sasl.kerberos.kinit.cmd= \
+             sasl.kerberos.min.time.before.relogin= \
+             sasl.kerberos.ticket.renew.jitter= \
+             sasl.kerberos.ticket.renew.window.factor= \
+             ssl.cipher.suites= \
+             ssl.endpoint.identification.algorithm= \
+             ssl.keymanager.algorithm= \
+             ssl.secure.random.implementation= \
+             ssl.trustmanager.algorithm="
+
+    COMPREPLY=( $(compgen -W "${configs}" -- ${cur}) )
+    compopt -o nospace
+    return 0
+}
+
+
+_landoop-kafka-console-producer() {
+    local cur prev opts wotherarg wfileargs wdirargs allopts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    wotherarg="--batch-size \
+               --broker-list \
+               --compression-codec \
+               --key-serializer \
+               --line-reader \
+               --max-block-ms \
+               --max-memory-bytes \
+               --max-partition-memory-bytes \
+               --message-send-max-retries \
+               --metadata-expiry-ms \
+               --producer-property \
+               --property \
+               --queue-enqueuetimeout-ms \
+               --queue-size \
+               --request-required-acks \
+               --request-timeout-ms \
+               --retry-backoff-ms \
+               --socket-buffer-size \
+               --timeout \
+               --topic \
+               --value-serializer"
+
+    wfileargs="--producer.config"
+    wdirargs=""
+    opts="--old-producer \
+          --sync"
+    allopts="$wotherarg $opts $wfileargs $wdirargs"
+
+    case "$prev" in
+        --broker-list)
+            _known_hosts
+            return 0
+            ;;
+	--producer-property)
+            _landoop-producer-configs
+            return 0
+            ;;
+	@(${wfileargs// /|}))
+            _filedir
+            return 0
+            ;;
+	# @(${wdirargs// /|}))
+        #     _filedir -d
+        #     return 0
+        #     ;;
+	@(${wotherarg// /|}))
+            return 0
+            ;;
+    esac
+
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${allopts}" -- ${cur}) )
+        return 0
+    fi
+}
+
+complete -F _landoop-kafka-console-producer kafka-console-producer
