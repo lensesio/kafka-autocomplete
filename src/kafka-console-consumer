@@ -1,4 +1,4 @@
-# bash completion for kafka-console-consumer                -*- shell-script -*-
+# bash completion for kafka-(avro-)console-consumer         -*- shell-script -*-
 
 _landoop-consumer-configs()
 {
@@ -126,3 +126,4 @@ _landoop-kafka-console-consumer() {
 }
 
 complete -F _landoop-kafka-console-consumer kafka-console-consumer
+complete -F _landoop-kafka-console-consumer kafka-avro-console-consumer

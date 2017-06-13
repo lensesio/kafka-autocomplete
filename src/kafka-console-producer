@@ -1,4 +1,4 @@
-# bash completion for kafka-console-producer                -*- shell-script -*-
+# bash completion for kafka-(avro-)console-producer         -*- shell-script -*-
 
 _landoop-producer-configs()
 {
@@ -126,3 +126,4 @@ _landoop-kafka-console-producer() {
 }
 
 complete -F _landoop-kafka-console-producer kafka-console-producer
+complete -F _landoop-kafka-console-producer kafka-avro-console-producer
