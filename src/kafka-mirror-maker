@@ -1,0 +1,45 @@
+# bash completion for kafka-mirror-maker                    -*- shell-script -*-
+
+_landoop-kafka-mirror-maker() {
+    local cur prev opts wotherarg wfileargs wdirargs allopts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    wotherarg="--abort.on.send.failure \
+               --blacklist \
+               --consumer.rebalance.listener \
+               --message.handler \
+               --message.handler.args \
+               --num.streams \
+               --offset.commit.interval.ms \
+               --rebalance.listener.args \
+               --whitelist"
+    wfileargs="--consumer.config \
+               --producer.config"
+    wdirargs=""
+    opts="--help \
+          --new.consumer"
+
+    allopts="$wotherarg $opts $wfileargs $wdirargs"
+
+    case "$prev" in
+	@(${wfileargs// /|}))
+            _filedir
+            return 0
+            ;;
+	@(${wdirargs// /|}))
+            _filedir -d
+            return 0
+            ;;
+	@(${wotherarg// /|}))
+            return 0
+            ;;
+    esac
+
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${allopts}" -- ${cur}) )
+        return 0
+    fi
+}
+
+complete -F _landoop-kafka-mirror-maker kafka-mirror-maker
