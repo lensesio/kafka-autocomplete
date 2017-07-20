@@ -101,7 +101,8 @@ _landoop-kafka-topics() {
           --disable-rack-aware \
           --force \
           --help \
-          --if-not-exits \
+          --if-exists \
+          --if-not-exists \
           --list \
           --topics-with-overrides \
           --unavailable-partitions \
