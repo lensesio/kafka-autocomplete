@@ -43,3 +43,4 @@ _landoop-kafka-mirror-maker() {
 }
 
 complete -F _landoop-kafka-mirror-maker kafka-mirror-maker
+complete -F _landoop-kafka-mirror-maker kafka-mirror-maker.sh

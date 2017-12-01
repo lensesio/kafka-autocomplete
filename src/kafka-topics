@@ -12,7 +12,7 @@ _landoop-kafka-topics-configs()
              file.delete.delay.ms= \
              flush.messages= \
              flush.ms= \
-             follower.replication.throttled= \
+             follower.replication.throttled.replicas= \
              index.interval.bytes= \
              leader.replication.throttled.replicas= \
              max.message.bytes= \
@@ -48,7 +48,7 @@ _landoop-kafka-topics-delete-configs()
              file.delete.delay.ms \
              flush.messages \
              flush.ms \
-             follower.replication.throttled \
+             follower.replication.throttled.replicas \
              index.interval.bytes \
              leader.replication.throttled.replicas \
              max.message.bytes \
@@ -147,3 +147,4 @@ _landoop-kafka-topics() {
 }
 
 complete -F _landoop-kafka-topics kafka-topics
+complete -F _landoop-kafka-topics kafka-topics.sh

@@ -1,0 +1,104 @@
+# bash completion for kafka-acls                            -*- shell-script -*-
+
+_landoop-acls-operations()
+{
+    local cur prev configs
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    configs="Read \
+             Write \
+             Create \
+             Delete \
+             Alter \
+             Describe \
+             ClusterAction \
+             AlterConfigs \
+             DescribeConfigs \
+             IdempotentWrite \
+             All"
+
+    COMPREPLY=( $(compgen -W "${configs}" -- ${cur}) )
+    compopt -o nospace
+    return 0
+}
+
+_landoop-acls-authorizer-configs()
+{
+    local cur prev configs
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    configs="zookeeper.connect="
+
+    COMPREPLY=( $(compgen -W "${configs}" -- ${cur}) )
+    compopt -o nospace
+    return 0
+}
+
+_landoop-kafka-acls() {
+    local cur prev opts wotherarg wfileargs wdirargs allopts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    wotherarg="--allow-host \
+               --allow-principal \
+               --authorizer \
+               --deny-host \
+               --deny-principal \
+               --group \
+               --operation \
+               --topic \
+               --transactional-id"
+    # wfileargs=""
+    # wdirargs=""
+    opts="--add \
+          --cluster \
+          --consumer \
+          --force \
+          --help \
+          --idempotent \
+          --list \
+          --producer \
+          --remove"
+    allopts="$wotherarg $opts $wfileargs $wdirargs"
+
+    case "$prev" in
+        --allow_host)
+            _known_hosts
+            return 0
+            ;;
+        --deny-host)
+            _known_hosts
+            return 0
+            ;;
+	--authorizer)
+            _landoop-acls-authorizer-configs
+            return 0
+            ;;
+        --operation)
+            _landoop-acls-operations
+            return 0
+            ;;
+	# @(${wfileargs// /|}))
+        #     _filedir
+        #     return 0
+        #     ;;
+	# @(${wdirargs// /|}))
+        #     _filedir -d
+        #     return 0
+        #     ;;
+	@(${wotherarg// /|}))
+            return 0
+            ;;
+    esac
+
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${allopts}" -- ${cur}) )
+        return 0
+    fi
+}
+
+complete -F _landoop-kafka-acls kafka-acls
+complete -F _landoop-kafka-acls kafka-acls.sh
+

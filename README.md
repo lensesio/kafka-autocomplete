@@ -13,11 +13,13 @@ You will find the completion file under `release/kafka`. You can source it in
 your terminal or drop it in `/etc/bash_completion.d/`. You have to set up
 bash-completion too, which depends on your distribution of choice.
 
-Currently completion is provided for three utilities:
+Currently completion is provided for five utilities:
 
 - kafka-topics
-- kafka-console-consumer
-- kafka-console-producer
+- kafka-console-consumer / kafka-avro-console-consumer
+- kafka-console-producer / kafka-avro-console-producer
+- kafka-mirrormaker
+- kafka-acls
 
 We provide completion for options, kafka configs and kafka properties.
 Especially for `kafka-topics` if you set the `--zookeeper` switch, we try to

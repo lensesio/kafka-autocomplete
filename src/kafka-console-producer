@@ -37,14 +37,14 @@ _landoop-producer-configs()
              ssl.protocol= \
              ssl.provider= \
              ssl.truststore.type= \
-             timeout.ms= \
-             block.on.buffer.full= \
+             enable.idempotence= \
              interceptor.classes= \
              max.in.flight.requests.per.connection= \
              metadata.fetch.timeout.ms= \
              metadata.max.age.ms= \
              metric.reporters= \
              metrics.num.samples= \
+             metrics.recording.level= \
              metrics.sample.window.ms= \
              reconnect.backoff.ms= \
              retry.backoff.ms= \
@@ -56,13 +56,30 @@ _landoop-producer-configs()
              ssl.endpoint.identification.algorithm= \
              ssl.keymanager.algorithm= \
              ssl.secure.random.implementation= \
-             ssl.trustmanager.algorithm="
+             ssl.trustmanager.algorithm= \
+             transaction.timeout.ms \
+             transactional.id"
 
     COMPREPLY=( $(compgen -W "${configs}" -- ${cur}) )
     compopt -o nospace
     return 0
 }
 
+_landoop-producer-compression-configs()
+{
+    local cur prev configs
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    configs="none \
+             gzip \
+             snappy \
+             lz4"
+
+    COMPREPLY=( $(compgen -W "${configs}" -- ${cur}) )
+    compopt -o nospace
+    return 0
+}
 
 _landoop-kafka-console-producer() {
     local cur prev opts wotherarg wfileargs wdirargs allopts
@@ -106,6 +123,10 @@ _landoop-kafka-console-producer() {
             _landoop-producer-configs
             return 0
             ;;
+        --compression-codec)
+            _landoop-producer-compression-configs
+            return 0
+            ;;
 	@(${wfileargs// /|}))
             _filedir
             return 0
@@ -127,3 +148,5 @@ _landoop-kafka-console-producer() {
 
 complete -F _landoop-kafka-console-producer kafka-console-producer
 complete -F _landoop-kafka-console-producer kafka-avro-console-producer
+complete -F _landoop-kafka-console-producer kafka-console-producer.sh
+complete -F _landoop-kafka-console-producer kafka-avro-console-producer.sh

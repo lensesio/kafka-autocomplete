@@ -24,6 +24,7 @@ _landoop-consumer-configs()
              enable.auto.commit= \
              exclude.internal.topics= \
              fetch.max.bytes= \
+             isolation.level= \
              max.poll.interval.ms= \
              max.poll.records= \
              partition.assignment.strategy= \
@@ -66,6 +67,19 @@ _landoop-consumer-configs()
     return 0
 }
 
+_landoop-consumer-isolation-configs()
+{
+    local cur prev configs
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    configs="read_committed \
+             read_uncommitted"
+
+    COMPREPLY=( $(compgen -W "${configs}" -- ${cur}) )
+    compopt -o nospace
+    return 0
+}
 
 _landoop-kafka-console-consumer() {
     local cur prev opts wotherarg wfileargs wdirargs allopts
@@ -76,6 +90,7 @@ _landoop-kafka-console-consumer() {
                --bootstrap-server \
                --consumer-property \
                --formatter \
+               --isolation-level \
                --key-deserializer \
                --max-messages \
                --offset \
@@ -106,6 +121,10 @@ _landoop-kafka-console-consumer() {
             _landoop-consumer-configs
             return 0
             ;;
+        --isolation-level)
+            _landoop-consumer-isolation-configs
+            return 0
+            ;;
 	@(${wfileargs// /|}))
             _filedir
             return 0
@@ -127,3 +146,5 @@ _landoop-kafka-console-consumer() {
 
 complete -F _landoop-kafka-console-consumer kafka-console-consumer
 complete -F _landoop-kafka-console-consumer kafka-avro-console-consumer
+complete -F _landoop-kafka-console-consumer kafka-console-consumer.sh
+complete -F _landoop-kafka-console-consumer kafka-avro-console-consumer.sh
