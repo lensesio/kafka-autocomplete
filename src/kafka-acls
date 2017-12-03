@@ -23,7 +23,7 @@ _landoop-acls-operations()
     return 0
 }
 
-_landoop-acls-authorizer-configs()
+_landoop-acls-authorizer-properties-configs()
 {
     local cur prev configs
     COMPREPLY=()
@@ -44,6 +44,7 @@ _landoop-kafka-acls() {
     wotherarg="--allow-host \
                --allow-principal \
                --authorizer \
+               --authorizer-properties \
                --deny-host \
                --deny-principal \
                --group \
@@ -64,16 +65,12 @@ _landoop-kafka-acls() {
     allopts="$wotherarg $opts $wfileargs $wdirargs"
 
     case "$prev" in
-        --allow_host)
+        --allow-host|--deny-host)
             _known_hosts
             return 0
             ;;
-        --deny-host)
-            _known_hosts
-            return 0
-            ;;
-	--authorizer)
-            _landoop-acls-authorizer-configs
+	--authorizer-properties)
+            _landoop-acls-authorizer-properties-configs
             return 0
             ;;
         --operation)
