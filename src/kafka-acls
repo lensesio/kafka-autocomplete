@@ -29,7 +29,25 @@ _landoop-acls-authorizer-properties-configs()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    configs="zookeeper.connect="
+    configs="zookeeper.connect= \
+             sentry.kafka.site.url= \
+             sentry.kafka.principal.hostname= \
+             sentry.kafka.kerberos.principal= \
+             sentry.kafka.keytab.file="
+
+    COMPREPLY=( $(compgen -W "${configs}" -- ${cur}) )
+    compopt -o nospace
+    return 0
+}
+
+_landoop-acls-authorizer-configs()
+{
+    local cur prev configs
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    configs="kafka.security.auth.SimpleAclAuthorizer \
+             org.apache.sentry.kafka.authorizer.SentryKafkaAuthorizer"
 
     COMPREPLY=( $(compgen -W "${configs}" -- ${cur}) )
     compopt -o nospace
@@ -71,6 +89,10 @@ _landoop-kafka-acls() {
             ;;
 	--authorizer-properties)
             _landoop-acls-authorizer-properties-configs
+            return 0
+            ;;
+	--authorizer)
+            _landoop-acls-authorizer-configs
             return 0
             ;;
         --operation)
